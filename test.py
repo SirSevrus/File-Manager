@@ -1,3 +1,4 @@
+# 38 Seconds
 import os
 import time
 
@@ -5,13 +6,13 @@ def init(dirPath):
     if os.path.isdir(dirPath):
         files = []
         try:
-            for root, dirs, file_names in os.walk(dirPath):
-                for file_name in file_names:
-                    try:
-                        absPath = os.path.join(root, file_name)
-                        files.append(absPath)
-                    except PermissionError:
-                        continue
+            for entry in os.scandir(dirPath):
+                if entry.is_file():
+                    files.append(entry.path)
+                elif entry.is_dir():
+                    files.extend(init(entry.path))  # Recursively scan directories
+        except PermissionError:
+            pass  # Skip files/directories that raise PermissionError
         except KeyboardInterrupt:
             exit(-1)
         return files
@@ -20,7 +21,8 @@ def init(dirPath):
         exit(-1)
 
 def getFiles(files):
-    countDirs = len(set(os.path.dirname(file) for file in files))
+    dirs = set(os.path.dirname(file) for file in files)
+    countDirs = len(dirs)
     countFiles = len(files)
 
     print(f'\nNumber of Dirs present: {countDirs}')
