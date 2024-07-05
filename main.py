@@ -6,8 +6,13 @@ def getFiles(dirPath):
         countDirs = 0
         countFiles = 0
         nonAcessible = 0
+        c = 0
         for i in os.walk(dirPath):
-            print(f'Total Files: {str(countFiles)} , Non Acessible : {str(nonAcessible)}', end='\r')
+            if c < 5:
+                print("|" + '#' * c, end='\r')
+                c += 1
+            elif c >= 5:
+                c = 0
             countDirs += len(i[1])
             countFiles += len(i[2])
             try:
