@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | {{ appName }}</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script>
+        let currentPage = 1;
+        const perPage = 20;
+
+        async function loadFilesData(page) {
+            const response = await fetch(`/files_data?page=${page}&per_page=${perPage}`);
+            const data = await response.json();
+            const tableBody = document.getElementById('filesTableBody');
+
+            for (const [path, size] of Object.entries(data)) {
+                const row = document.createElement('tr');
+                const pathCell = document.createElement('td');
+                const sizeCell = document.createElement('td');
+                
+                pathCell.textContent = path;
+                sizeCell.textContent = size;
+                
+                row.appendChild(pathCell);
+                row.appendChild(sizeCell);
+                tableBody.appendChild(row);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFilesData(currentPage);
+
+            document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                currentPage += 1;
+                loadFilesData(currentPage);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>File Path</th>
+                <th>Size (MB)</th>
+            </tr>
+        </thead>
+        <tbody id="filesTableBody">
+        </tbody>
+    </table>
+    <button id="loadMoreBtn">Load More</button>
+</body>
+</html>
