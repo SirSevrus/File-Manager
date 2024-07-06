@@ -1,30 +1,16 @@
 import os
 
-def getFiles(dirPath):
-    try:
-        if os.path.isdir(dirPath):
-            files = []
-            countDirs = 0
-            countFiles = 0
-            nonAccessible = 0
-            for root, dirs, file_names in os.walk(dirPath):
-                countDirs += len(dirs)
-                countFiles += len(file_names)
-                for file_name in file_names:
-                    try:
-                        absPath = os.path.join(root, file_name)
-                        files.append(absPath)
-                    except PermissionError:
-                        nonAccessible += 1
-                        continue
-            print(f'\nNumber of Dirs present: {countDirs}')
-            print(f'Number of Files present: {countFiles}')
-            print(f'Number of inaccessible files: {nonAccessible}')
-            return files
-        else:
-            print('Invalid Directory...')
-            exit(-1)
-    except KeyboardInterrupt:
-        exit(-1)
+def get_files_data(root_path):
+    files = {}
+    count = 0
+    for root, dirs, files_list in os.walk(root_path):
+        for file in files_list:
+            file_path = os.path.join(root, file)
+            if os.path.isfile(file_path):
+                size = round(os.path.getsize(file_path) / (1024 ** 2), 2)  # Size in MB
+                files[file_path] = size
+                count += 1
+    return count, files
 
-files = getFiles("C:\\")
+# Example Usage
+    noFiles, files = get_files_data("c:\\")
